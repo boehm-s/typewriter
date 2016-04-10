@@ -13,7 +13,6 @@ HTMLElement.prototype.write = function(target, textSpeed, aleaSpeed, content, ca
     var addLetter = getAddLetter(this, target);
     var tabLetter = getTabLetter(this, target, content);
     var tabSpeed = getTabSpeed(tabLetter, textSpeed, aleaSpeed);
-    var callback = (typeof(callback) == "undefined") ? function(){return null} : callback;
 
     var i = 0, elem = this;
     (function loop(){ 
@@ -23,7 +22,6 @@ HTMLElement.prototype.write = function(target, textSpeed, aleaSpeed, content, ca
         i++;
 	((tabLetter[i]) ? setTimeout(loop, tabSpeed[i]) : callback());
     })();
-
 }
 
 function handleError(elem, target, args) {
@@ -83,6 +81,41 @@ function getTabSpeed(tabLetter, textSpeed, aleaSpeed) {
 
 
 
+HTMLElement.prototype.remove = function(target, textSpeed, aleaSpeed, callback) {
+    if (!handleError(this, target, arguments))
+	return (1);
+    callback = (typeof(callback) == "function") ? callback : function(){return null};
+
+    var textLength = getTextLength(this, target);
+    var removeLetter = getRemoveLetter(this, target);
+
+    var i = textLength, elem = this;
+    (function loop(){ 
+        removeLetter();
+        i--;
+	((i > 0) ? setTimeout(loop, (Math.random() * aleaSpeed) + textSpeed) : callback());
+    })();
+}
+
+function getRemoveLetter(elem, target) {
+    var removeLetter;
+    switch (target) {
+    case "placeholder" : removeLetter = function(letter) {elem.setAttribute("placeholder", elem.getAttribute("placeholder").slice(0,-1))}; break;
+    case "value" : removeLetter = function(letter) {elem.setAttribute("value", elem.getAttribute("value").slice(0,-1))}; break;
+    case "html" : removeLetter = function(letter) {elem.innerHTML = elem.innerHTML.toString().slice(0,-1)}; break;
+    }
+    return (removeLetter);
+}
+
+function getTextLength(elem, target) {
+    var textLength;
+    switch (target) {
+    case "placeholder" : textLength = elem.getAttribute("placeholder").length;break;
+    case "value" : textLength = elem.getAttribute("value").length;break;
+    case "html" : textLength = elem.innerHTML.length;break;
+    }
+    return (textLength);
+}
 
 
 
@@ -96,7 +129,7 @@ var textarea = document.getElementById("textarea1");
 input.setAttribute("placeholder", "");
 input.write("placeholder", 50, 90, "coucou tout le monde", function() {
     input.write("value", 100, 200, "ceci est un test de valeur pour input", function(){
-	console.log("COUCOU C'est FINI !");
+	input.remove("value", 50, 50, function() {console.log("cocoucoucouc")});
     });
 });
 elem.write("html", 50, 90, "hey you, out there in the cold, getting lonely getting old");
