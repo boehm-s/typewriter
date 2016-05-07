@@ -1,3 +1,0 @@
-faire en sorte de pouvoir reecrire dans le "Type" ==> methode Type.prototype.write ,
-pouvoir stopper le prompt (et ne pas entierement le supprimer);
-passer en parametre de Type un JSON pour la creation de sequences d'echappement

@@ -127,73 +127,54 @@ textarea<span style='color:#808030; '>.</span>write<span style='color:#808030; '
      var elem = document.getElementById("span");
      var input = document.getElementById("input");
      var textarea = document.getElementById("textarea");
-
+     
      elem.write("html", 50, 90, function(){
        elem.remove("html", 40, 0, function(){
-         elem.write("html", 100, 80, "done !", function() {
-           elemRestart.disabled = false;
-         });
+	 elem.write("html", 100, 80, "done !");
        });
      });
 
      input.write("placeholder", 100, 40, function() {
-       input.write("value", 100, 200, "here is the value", function(){
-         inputRestart.disabled = false;
-       });
+       input.write("value", 100, 200, "here is the value");
      });
-
+     
      textarea.write("placeholder", 50, 60, function(){
        textarea.remove("placeholder", 70, 0, function(){
-         textarea.write("html", 50, 80, "here is the content", function() {
-           textareaRestart.disabled = false;
-         });
+	 textarea.write("html", 50, 80, "here is the content")
        });
      });
 
      var elemRestart = document.getElementById('restart-elem');
      var inputRestart = document.getElementById('restart-input');
      var textareaRestart = document.getElementById('restart-textarea');
-
-
-     elemRestart.disabled = true;
-     inputRestart.disabled = true;
-     textareaRestart.disabled = true;
-
+     
      elemRestart.onclick = function() {
-     elemRestart.disabled = true;
        elem.innerHTML = " This is an example of how this little library works on a simple html element (here a span) ";
        elem.write("html", 50, 90, function(){
-         elem.remove("html", 40, 0, function(){
-           elem.write("html", 100, 80, "done !", function() {
-             elemRestart.disabled = false;
-           });
-         });
+	 elem.remove("html", 40, 0, function(){
+	   elem.write("html", 100, 80, "done !");
+	 });
        });
      };
 
      inputRestart.onclick = function(){
-       inputRestart.disabled = true;
        input.setAttribute("value", "");
        input.setAttribute("placeholder", "here is an example on a placeholder in an input   ");
        input.write("placeholder", 100, 40, function() {
-         input.write("value", 100, 200, "here is the value", function() {
-           inputRestart.disabled = false;
-         });
+	 input.write("value", 100, 200, "here is the value");
        });
      };
 
      textareaRestart.onclick = function() {
-       textareaRestart.disabled = true;
        textarea.innerHTML = "";
        textarea.setAttribute("placeholder", "placeholder again   ");
        textarea.write("placeholder", 50, 60, function(){
-         textarea.remove("placeholder", 70, 0, function(){
-           textarea.write("html", 50, 80, "here is the content", function() {
-             textareaRestart.disabled = false;
-           });
-         });
+	 textarea.remove("placeholder", 70, 0, function(){
+	   textarea.write("html", 50, 80, "here is the content")
+	 });
        });
      };
-    </script>    
+    </script>
+    
   </body>
 </html>
