@@ -10,21 +10,21 @@
 	 word-wrap:break-word
      }
     </style>
-    
+
   </head>
   <body>
     <h1> Vanilla Typist </h1>
     <h2> v0 </h2>
 
-    <br/> <span id="span"> This is an example of how this little library works on a simple html element (here a span) </span> 
+    <br/> <span id="span"> This is an example of how this little library works on a simple html element (here a span) </span>
     <br/> <br/>
     <button id="restart-elem"> Restart </button>
     <br/> <br/>
-    
-    <br/> <input type="text" placeholder="here is an example on a placeholder in an input   " value="" id="input" style="width: 350px;"/> 
+
+    <br/> <input type="text" placeholder="here is an example on a placeholder in an input   " value="" id="input" style="width: 350px;"/>
     <br/> <br/>
     <button id="restart-input"> Restart </button>
-    
+
     <br/> <textarea placeholder="placeholder again   " id="textarea"></textarea>
     <br/> <br/>
     <button id="restart-textarea"> Restart </button>
@@ -36,24 +36,24 @@
      var elem = document.getElementById("span");
      var input = document.getElementById("input");
      var textarea = document.getElementById("textarea");
-     
-     elem.write("html", 50, 90, function(){
-       elem.remove("html", 40, 0, function(){
-	 elem.write("html", 100, 80, "done !", function() {
+
+     elem.keyboard("html", 50, 90, function(){
+       elem.backspace("html", 40, 0, function(){
+	 elem.keyboard("html", 100, 80, "done !", function() {
 	   elemRestart.disabled = false;
 	 });
        });
      });
 
-     input.write("placeholder", 100, 40, function() {
-       input.write("value", 100, 200, "here is the value", function(){
+     input.keyboard("placeholder", 100, 40, function() {
+       input.keyboard("value", 100, 200, "here is the value", function(){
 	 inputRestart.disabled = false;
        });
      });
-     
-     textarea.write("placeholder", 50, 60, function(){
-       textarea.remove("placeholder", 70, 0, function(){
-	 textarea.write("html", 50, 80, "here is the content", function() {
+
+     textarea.keyboard("placeholder", 50, 60, function(){
+       textarea.backspace("placeholder", 70, 0, function(){
+	 textarea.keyboard("html", 50, 80, "here is the content", function() {
 	   textareaRestart.disabled = false;
 	 });
        });
@@ -62,7 +62,7 @@
      var elemRestart = document.getElementById('restart-elem');
      var inputRestart = document.getElementById('restart-input');
      var textareaRestart = document.getElementById('restart-textarea');
-     
+
 
      elemRestart.disabled = true;
      inputRestart.disabled = true;
@@ -104,6 +104,6 @@
        });
      };
     </script>
-    
+
   </body>
 </html>
