@@ -37,3 +37,8 @@ textarea.keyboard("placeholder", 50, 40, "type something", function() {
     });
 });
 ```
+
+## v1
+
+ES6 refacto and more intuitive way to use it
+ ==> Love FP
