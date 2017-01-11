@@ -1,51 +1,63 @@
-HTMLElement.prototype.keyboard = function(target, textSpeed, aleaSpeed, content, callback) {
-    if (!handleError(this, target, arguments))
-	return (1);
-    if (typeof(content) != "string") {
-	if (typeof(content) == "function")
+HTMLElement.prototype.keyboard = function(obj, /*target, textSpeed, aleaSpeed, content,*/ callback) {
+    let errObj = handleError(this, obj.target, arguments);
+    if (!errObj.isOK) {
+	throw new Error(errObj.message);
+	return 1;
+    } if (typeof(content) !== "string") {
+	if (typeof(content) === "function")
 	    callback = content;
 	content = null;
     } else
-	callback = (typeof(callback) == "function") ? callback : function(){return null;};
+	callback = (typeof(callback) === "function") ? callback : () => null;
 
-    var addLetter = getAddLetter(this, target);
-    var tabLetter = getTabLetter(this, target, content);
-    var tabSpeed = getTabSpeed(tabLetter, textSpeed, aleaSpeed);
+    let addLetter = getAddLetter(this, obj.target);
+    let tabLetter = getTabLetter(this, obj.target, obj.content);
+    let tabSpeed = getTabSpeed(tabLetter, obj.textSpeed, obj.aleaSpeed);
 
 
-    var i = 0, elem = this;
-    (function loop(){
+    var i = 0, elem = this; // loop closure --> BAD
+
+    return (function loop(){
 	addLetter(tabLetter[i]);
-	if (tabLetter[i] === tabLetter[i-1])
-	    tabSpeed[i]*= 1.8;
+	if (tabLetter[i] === tabLetter[i - 1])
+	    tabSpeed[i] *= 1.8;
 	i++;
-	((tabLetter[i]) ? setTimeout(loop, tabSpeed[i]) : callback());
+	return ((tabLetter[i]) ? setTimeout(loop, tabSpeed[i]) : callback());
     })();
-}
+};
 
-function handleError(elem, target, args) {
-    var isOK = false, err = new Error();
-    var errLine = "%c"+err.stack.split("\n")[(err.stack.split("\n").length - 1)];
-    var errMsg = "%cTypeWriter : Bad target name when calling HTMLElement.type(...). Available targets for ";
+const handleError = (elem, target, args) => {
+    let retObj = {isOK: false};
+    let errMsg = "TypeWriter : Bad target name when calling HTMLElement.keyboard(...). Available targets for";
+    let tagName = elem.tagName.toString();
 
-    switch (elem.tagName.toString()) {
-    case "INPUT":((target == "placeholder" || target == "value") ? isOK=true : (console.log(errMsg+"INPUT are : 'placeholder' and 'value'" + errLine,"color: red","color:black")));break;
-    case "TEXTAREA":((target == "placeholder" || target == "html") ? isOK=true : (console.log(errMsg+"TEXTAREA are : 'placeholder' and 'html'" + errLine,"color:red","color:black")));break;
-    default:((target == "html") ? isOK=true :  (console.log(errMsg+"basic tags is : 'html'" + errLine, "color:red", "color:black")));break;
+    if (tagName === 'INPUT') {
+	retObj = (target === 'placeholder' || target === 'value')
+	    ? {isOK: true}
+	: {isOK: false, message: `${errMsg} INPUT are : 'placeholder' and 'value'`};
+    } else if (tagName === 'TEXTAREA') {
+	retObj = (target === "placeholder" || target == "html")
+	    ? {isOK: true}
+	: {isOK: false, message: `${errMsg} TEXTAREA are : 'placeholder' and 'html'`};
+    } else {
+	retObj = (target == "html")
+	    ? {isOK: true}
+	: {isOK: false, message: `${errMsg} non-input or non-textarea elements is : 'html'`};
     }
 
-    if (isOK === true) {
-	if ((args.length < 3 || typeof(args[1]) !=  "number" || typeof(args[2]) !=  "number"
-	     ||  (typeof(args[3]) != "function" && typeof(args[3]) != "string" && typeof(args[3]) != "undefined")
-	     ||  (typeof(args[4]) != "function" && typeof(args[4]) != "string" && typeof(args[4]) != "undefined"))) {
-	    isOK = false;
-	    console.log("%cTypeWriter : Calling HTMLElement.type(...) with wrong arguments. Prototype is : HTMLElement.type(target, textSpeed, aleaSpeed, [content], [callback])" + errLine, "color:red","color:black");
-	}
-    }
-    return (isOK);
-}
+    // if (retObj.isOK === true) {
+    // 	if ((args.length < 3 || typeof(args[1]) !=  'number' || typeof(args[2]) !==  'number'
+    // 	     ||  (typeof(args[3]) !== 'function' && typeof(args[3]) !== 'string' && typeof(args[3]) !== 'undefined')
+    // 	     ||  (typeof(args[4]) !== 'function' && typeof(args[4]) !== 'string' && typeof(args[4]) !== 'undefined'))) {
+    // 	    retObj.isOK = false;
+    // 	    retObj.message = 'TypeWriter : Calling HTMLElement.keyboard(...) with wrong arguments. Prototype is : HTMLElement.keyboard({target, textSpeed, aleaSpeed, [content]}, [callback])';
+    // 	}
+    // }
 
-function getAddLetter(elem, target) {
+    return (retObj);
+};
+
+const  getAddLetter = (elem, target) => {
     var addLetter;
     switch (target) {
     case "placeholder" : addLetter = function(letter) {elem.setAttribute("placeholder", elem.getAttribute("placeholder") + letter);}; break;
@@ -53,10 +65,10 @@ function getAddLetter(elem, target) {
     case "html" : addLetter = function(letter) {elem.innerHTML+=letter;}; break;
     }
     return (addLetter);
-}
+};
 
 
-function getTabLetter(elem, target, content) {
+const getTabLetter = (elem, target, content) => {
     var text, arrText = [], i;
     switch (target) {
     case "placeholder" : text = (content == null) ? elem.getAttribute("placeholder") : content; if (content == null) elem.setAttribute("placeholder", ""); break;
@@ -68,15 +80,15 @@ function getTabLetter(elem, target, content) {
 	arrText.push(text[i]);
 
     return (arrText);
-}
+};
 
-function getTabSpeed(tabLetter, textSpeed, aleaSpeed) {
+const getTabSpeed = (tabLetter, textSpeed, aleaSpeed) => {
     var arrSpeed = [];
     for (i=0; i < tabLetter.length; i++)
 	arrSpeed.push(Math.floor((Math.random() * aleaSpeed) + textSpeed));
 
     return (arrSpeed);
-}
+};
 
 
 HTMLElement.prototype.backspace = function(target, textSpeed, aleaSpeed, callback) {
