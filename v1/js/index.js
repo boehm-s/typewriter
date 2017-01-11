@@ -1,3 +1,5 @@
+// todo : a function to fill default object
+
 HTMLElement.prototype.keyboard = function(obj, /*target, textSpeed, aleaSpeed, content,*/ callback) {
     let errObj = handleError(this, obj.target, arguments);
     if (!errObj.isOK) {
@@ -45,14 +47,17 @@ const handleError = (elem, target, args) => {
 	: {isOK: false, message: `${errMsg} non-input or non-textarea elements is : 'html'`};
     }
 
-    // if (retObj.isOK === true) {
-    // 	if ((args.length < 3 || typeof(args[1]) !=  'number' || typeof(args[2]) !==  'number'
-    // 	     ||  (typeof(args[3]) !== 'function' && typeof(args[3]) !== 'string' && typeof(args[3]) !== 'undefined')
-    // 	     ||  (typeof(args[4]) !== 'function' && typeof(args[4]) !== 'string' && typeof(args[4]) !== 'undefined'))) {
-    // 	    retObj.isOK = false;
-    // 	    retObj.message = 'TypeWriter : Calling HTMLElement.keyboard(...) with wrong arguments. Prototype is : HTMLElement.keyboard({target, textSpeed, aleaSpeed, [content]}, [callback])';
-    // 	}
-    // }
+    if (retObj.isOK === true) {
+    	if (args.length > 2
+	    || (args[0].target && typeof(args[0].target) !== 'string')
+	    || (args[0].textSpeed && typeof(args[0].textSpeed) !== 'number')
+	    || (args[0].aleaSpeed && typeof(args[0].aleaSpeed) !== 'number')
+	    || (args[0].content && typeof(args[0].content) !== 'string')) {
+
+    	    retObj.isOK = false;
+    	    retObj.message = 'TypeWriter : Calling HTMLElement.keyboard(...) with wrong arguments. Prototype is : HTMLElement.keyboard({target, textSpeed, aleaSpeed, [content]}, [callback])';
+    	}
+    }
 
     return (retObj);
 };
@@ -69,23 +74,20 @@ const  getAddLetter = (elem, target) => {
 
 
 const getTabLetter = (elem, target, content) => {
-    var text, arrText = [], i;
+    var text;
     switch (target) {
     case "placeholder" : text = (content == null) ? elem.getAttribute("placeholder") : content; if (content == null) elem.setAttribute("placeholder", ""); break;
     case "value" : text =  (content == null) ? elem.getAttribute("value") : content; if (content == null) elem.setAttribute("value", ""); break;
     case "html" : text =  (content == null) ? elem.innerHTML : content; if (content == null) elem.innerHTML = ""; break;
     }
 
-    for (i=0; i < text.length; i++)
-	arrText.push(text[i]);
-
-    return (arrText);
+    return text.split('');
 };
 
 const getTabSpeed = (tabLetter, textSpeed, aleaSpeed) => {
-    var arrSpeed = [];
-    for (i=0; i < tabLetter.length; i++)
-	arrSpeed.push(Math.floor((Math.random() * aleaSpeed) + textSpeed));
+    let arrSpeed = Array(tabLetter.length)
+	    .fill()
+	    .map(_ => Math.floor((Math.random() * aleaSpeed) + textSpeed));
 
     return (arrSpeed);
 };
