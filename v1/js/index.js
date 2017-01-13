@@ -1,16 +1,11 @@
-// todo : a function to fill default object
-
 HTMLElement.prototype.keyboard = function(obj, /*target, textSpeed, aleaSpeed, content,*/ callback) {
     let errObj = handleError(this, obj.target, arguments);
     if (!errObj.isOK) {
 	throw new Error(errObj.message);
 	return 1;
-    } if (typeof(content) !== "string") {
-	if (typeof(content) === "function")
-	    callback = content;
-	content = null;
-    } else
-	callback = (typeof(callback) === "function") ? callback : () => null;
+    }
+    obj = fillDefaultObj(this, obj);
+    callback = (typeof(callback) === "function") ? callback : () => null;
 
     let addLetter = getAddLetter(this, obj.target);
     let tabLetter = getTabLetter(this, obj.target, obj.content);
@@ -38,7 +33,7 @@ const handleError = (elem, target, args) => {
 	    ? {isOK: true}
 	: {isOK: false, message: `${errMsg} INPUT are : 'placeholder' and 'value'`};
     } else if (tagName === 'TEXTAREA') {
-	retObj = (target === "placeholder" || target == "html")
+	retObj = (target === 'placeholder' || target == 'html')
 	    ? {isOK: true}
 	: {isOK: false, message: `${errMsg} TEXTAREA are : 'placeholder' and 'html'`};
     } else {
@@ -60,6 +55,17 @@ const handleError = (elem, target, args) => {
     }
 
     return (retObj);
+};
+
+const fillDefaultObj = (self, obj = {}) => {
+    if (!obj.target)
+	obj.target = typeof(self) === 'INPUT' ? 'value' : 'html';
+    if (!obj.textSpeed)
+	obj.textSpeed = 50;
+    if (!obj.aleaSpeed)
+	obj.aleaSpeed = 90;
+
+    return obj;
 };
 
 const  getAddLetter = (elem, target) => {
