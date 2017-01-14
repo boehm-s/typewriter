@@ -1,4 +1,4 @@
-HTMLElement.prototype.keyboard = function(obj, /*target, textSpeed, aleaSpeed, content,*/ callback) {
+HTMLElement.prototype.keyboard = function(obj, callback) {
     let errObj = handleError(this, obj.target, arguments);
     if (!errObj.isOK) {
 	throw new Error(errObj.message);
@@ -12,8 +12,7 @@ HTMLElement.prototype.keyboard = function(obj, /*target, textSpeed, aleaSpeed, c
     let tabSpeed = getTabSpeed(tabLetter, obj.textSpeed, obj.aleaSpeed);
 
 
-    var i = 0, elem = this; // loop closure --> BAD
-
+    let i = 0;
     return (function loop(){
 	addLetter(tabLetter[i]);
 	if (tabLetter[i] === tabLetter[i - 1])
@@ -69,25 +68,40 @@ const fillDefaultObj = (self, obj = {}) => {
 };
 
 const  getAddLetter = (elem, target) => {
-    var addLetter;
-    switch (target) {
-    case "placeholder" : addLetter = function(letter) {elem.setAttribute("placeholder", elem.getAttribute("placeholder") + letter);}; break;
-    case "value" : addLetter = function(letter) {elem.setAttribute("value", elem.getAttribute("value") + letter);}; break;
-    case "html" : addLetter = function(letter) {elem.innerHTML+=letter;}; break;
-    }
-    return (addLetter);
+    let addLetterObj = [
+	{ target: "placeholder",    addLetter(letter) { elem.setAttribute(this.target, `${elem.getAttribute(this.target)} ${letter}`); } },
+	{ target: "value",	    addLetter(letter) { elem.setAttribute(this.target, `${elem.getAttribute(this.target)} ${letter}`); } },
+	{ target: "html",	    addLetter(letter) { elem.innerHTML += letter; } },
+    ];
+
+    return addLetterObj.filter(obj => obj.target === target)[0].addLetter;
 };
 
 
 const getTabLetter = (elem, target, content) => {
-    var text;
-    switch (target) {
-    case "placeholder" : text = (content == null) ? elem.getAttribute("placeholder") : content; if (content == null) elem.setAttribute("placeholder", ""); break;
-    case "value" : text =  (content == null) ? elem.getAttribute("value") : content; if (content == null) elem.setAttribute("value", ""); break;
-    case "html" : text =  (content == null) ? elem.innerHTML : content; if (content == null) elem.innerHTML = ""; break;
-    }
+    let TabLetterObj = [
+	{target: "placeholder", func(){
+	    let text = content || elem.getAttribute(this.target);
+	    if (content == null)
+		elem.setAttribute("placeholder", "");
+	    return text;
+	}},
+	{target: "value", func(){
+	    let text = content || elem.getAttribute(this.target); if (content == null) elem.setAttribute("value", "");
+	    if (content == null)
+		elem.setAttribute("value", "");
+	    return text;
+	}},
+	{target: "html", func(){
+	    let text = content || elem.innerHTML;
+	    if (content == null)
+		elem.innerHTML = "";
+	    return text;
+	}}
+    ];
 
-    return text.split('');
+    let choosenObj = TabLetterObj.filter(obj => obj.target === target)[0];
+    return choosenObj.func().split('');
 };
 
 const getTabSpeed = (tabLetter, textSpeed, aleaSpeed) => {
@@ -102,7 +116,7 @@ const getTabSpeed = (tabLetter, textSpeed, aleaSpeed) => {
 HTMLElement.prototype.backspace = function(target, textSpeed, aleaSpeed, callback) {
     if (!handleError(this, target, arguments))
 	return (1);
-    callback = (typeof(callback) == "function") ? callback : function(){return null};
+    callback = (typeof(callback) == "function") ? callback : () => null;
 
     var textLength = getTextLength(this, target);
     var removeLetter = getRemoveLetter(this, target);
