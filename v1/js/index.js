@@ -116,7 +116,7 @@ const getTabSpeed = (tabLetter, textSpeed, aleaSpeed) => {
 HTMLElement.prototype.backspace = function(target, textSpeed, aleaSpeed, callback) {
     if (!handleError(this, target, arguments))
 	return (1);
-    callback = (typeof(callback) == "function") ? callback : () => null;
+    callback = (typeof(callback) === "function") ? callback : () => null;
 
     var textLength = getTextLength(this, target);
     var removeLetter = getRemoveLetter(this, target);
@@ -130,21 +130,21 @@ HTMLElement.prototype.backspace = function(target, textSpeed, aleaSpeed, callbac
 }
 
 function getRemoveLetter(elem, target) {
-    var removeLetter;
-    switch (target) {
-    case "placeholder" : removeLetter = function(letter) {elem.setAttribute("placeholder", elem.getAttribute("placeholder").slice(0,-1));}; break;
-    case "value" : removeLetter = function(letter) {elem.setAttribute("value", elem.getAttribute("value").slice(0,-1));}; break;
-    case "html" : removeLetter = function(letter) {elem.innerHTML = elem.innerHTML.toString().slice(0,-1);}; break;
-    }
-    return (removeLetter);
+    let optTab = [
+	{target: "placeholder", removeLetter(letter) { elem.setAttribute(this.target, elem.getAttribute(this.target).slice(0,-1)); } },
+	{target: "value", removeLetter(letter) { elem.setAttribute(this.target, elem.getAttribute(this.target).slice(0,-1)); } },
+	{target: "html", removeLetter(letter) { elem.innerHTML = elem.innerHTML.toString().slice(0,-1); } }
+    ];
+
+    return optTab.filter(opt => opt.target === target)[0].removeLetter;
 }
 
 function getTextLength(elem, target) {
-    var textLength;
-    switch (target) {
-    case "placeholder" : textLength = elem.getAttribute("placeholder").length;break;
-    case "value" : textLength = elem.getAttribute("value").length;break;
-    case "html" : textLength = elem.innerHTML.length;break;
-    }
-    return (textLength);
+    let optTab = [
+	{target: "placeholder", value: elem.getAttribute("placeholder").length },
+	{target: "value", value: elem.getAttribute("value")},
+	{target: "html", value: elem.innerHTML.length }
+    ];
+
+    return optTab.filter(opt => opt.target === target)[0].value;;
 }
