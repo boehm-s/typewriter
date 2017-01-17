@@ -113,21 +113,21 @@ const getTabSpeed = (tabLetter, textSpeed, aleaSpeed) => {
 };
 
 
-HTMLElement.prototype.backspace = function(target, textSpeed, aleaSpeed, callback) {
-    if (!handleError(this, target, arguments))
+HTMLElement.prototype.backspace = function(obj, callback) {
+    if (!handleError(this, obj.target, arguments))
 	return (1);
     callback = (typeof(callback) === "function") ? callback : () => null;
 
-    var textLength = getTextLength(this, target);
-    var removeLetter = getRemoveLetter(this, target);
+    var textLength = getTextLength(this, obj.target);
+    var removeLetter = getRemoveLetter(this, obj.target);
 
     var i = textLength, elem = this;
     (function loop(){
 	removeLetter();
 	i--;
-	((i > 0) ? setTimeout(loop, (Math.random() * aleaSpeed) + textSpeed) : callback());
+	((i > 0) ? setTimeout(loop, (Math.random() * obj.aleaSpeed) + obj.textSpeed) : callback());
     })();
-}
+};
 
 function getRemoveLetter(elem, target) {
     let optTab = [
@@ -141,10 +141,10 @@ function getRemoveLetter(elem, target) {
 
 function getTextLength(elem, target) {
     let optTab = [
-	{target: "placeholder", value: elem.getAttribute("placeholder").length },
-	{target: "value", value: elem.getAttribute("value")},
-	{target: "html", value: elem.innerHTML.length }
+	{target: "placeholder", getValue() {return elem.getAttribute(this.target).length; } },
+	{target: "value", getValue() {return elem.value.length;} },
+	{target: "html", getValue() {return elem.innerHTML.length; } }
     ];
 
-    return optTab.filter(opt => opt.target === target)[0].value;;
+    return optTab.filter(opt => opt.target === target)[0].getValue();
 }

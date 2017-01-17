@@ -37,7 +37,7 @@
      var input = document.getElementById("input");
      var textarea = document.getElementById("textarea");
 
-     elem.keyboard({target: "html", textSpeed: 50, aleaSpeed: 90}, function(){
+     elem.keyboard({target: "html", textSpeed: 10, aleaSpeed: 10}, function(){
        elem.backspace({target: "html", textSpeed: 40, aleaSpeed: 0}, function(){
 	 elem.keyboard({target: "html", textSpeed: 100, aleaSpeed: 80, content: "done !"}, function() {
 	   elemRestart.disabled = false;
