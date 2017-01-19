@@ -1,10 +1,11 @@
 # Vanilla-Typist
 
-Vanilla Typist is a Javascript Front-End Library that can simulate keystrokes. This library provides the method `keyboard` and `backspace` to HTML Elements. These methods can be used on any HTML Tag with no childrens like `<p>`, `<span>`, empty `<div>`, `<a>` ... And on text input and textareas.
+Vanilla Typist is a Javascript Front-End micro-library that simulate someone writing on a keyboard.
+This library provides the method `keyboard` and `backspace` to HTML Elements. These methods can be used on any HTML Tag with no childrens like `<p>`, `<span>`, empty `<div>`, `<a>` ... And on `input` and `textarea`.
 
 ## How to use it ?
 ```javascript
-HTMLElement.keyboard(target, writeSpeed, aleaSpeed, textToWrite, callback);
+HTMLElement.keyboard({[target], [writeSpeed], [aleaSpeed], [textToWrite]}, callback);
 ```
 
 - `target` can be "html", "value" or "placeholder" depending on the tag's type (div, input, textarea)
@@ -13,7 +14,7 @@ HTMLElement.keyboard(target, writeSpeed, aleaSpeed, textToWrite, callback);
 - `textToWrite` is the text that will be written in your HTMLElement (it will be added if there is already some text)
 - `callback` is the callback
 
-> `textToWrite` and `callback` are optional
+> all parameters are optional.
 
 ## Examples
 
@@ -23,22 +24,11 @@ var input = document.getElementById("input");
 var textarea = document.getElementById("textarea");
 
 input.setAttribute("placeholder", "");
-input.keyboard("placeholder", 50, 90, "There's a lady who's sure all that glitters is gold", function() {
-    input.keyboard("value", 100, 200, "And she's buying a stairway to heaven.", function() {
-        input.backspace("value", 50, 50, function() { console.log("removed") });
-    });
-});
-
-elem.keyboard("html", 50, 90, "hey you, out there in the cold, getting lonely getting old");
-
-textarea.keyboard("placeholder", 50, 40, "type something", function() {
-    textarea.keyboard("html", 50, 40, "hey you ! Out there in the cold, getting lonely getting old ... ", function() {
-        console.log("DONE");
+input.keyboard({ target: "placeholder", writeSpeed: 50, aleaSpeed: 90, textToWrite: "There's a lady who's sure all that glitters is gold" }, function() {
+    input.keyboard({ target: "value", writeSpeed: 100, aleaSpeed: 200, TextToWrite: "And she's buying a stairway to heaven." }, function() {
+        input.backspace({ target: "value", writeSpeed: 50, textSpeed: 50 } function() {
+            console.log("removed")
+        });
     });
 });
 ```
-
-## v1
-
-ES6 refacto and more intuitive way to use it
- ==> Love FP
