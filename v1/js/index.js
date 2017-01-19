@@ -116,6 +116,7 @@ const getTabSpeed = (tabLetter, textSpeed, aleaSpeed) => {
 HTMLElement.prototype.backspace = function(obj, callback) {
     if (!handleError(this, obj.target, arguments))
 	return (1);
+    obj = fillDefaultObj(this, obj);
     callback = (typeof(callback) === "function") ? callback : () => null;
 
     var textLength = getTextLength(this, obj.target);
