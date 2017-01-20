@@ -25,8 +25,8 @@ var textarea = document.getElementById("textarea");
 
 input.setAttribute("placeholder", "");
 input.keyboard({ target: "placeholder", writeSpeed: 50, aleaSpeed: 90, textToWrite: "There's a lady who's sure all that glitters is gold" }, function() {
-    input.keyboard({ target: "value", writeSpeed: 100, aleaSpeed: 200, TextToWrite: "And she's buying a stairway to heaven." }, function() {
-        input.backspace({ target: "value", writeSpeed: 50, textSpeed: 50 } function() {
+    input.keyboard({ target: "value", TextToWrite: "And she's buying a stairway to heaven." }, function() {
+        input.backspace({ target: "value" } function() {
             console.log("removed")
         });
     });
